@@ -70,9 +70,7 @@ services:
         - ~/.flowise:/root/.flowise
     entrypoint: /bin/sh -c "sleep 3; flowise start"
 
-  kong:
-    image: supabase/kong:latest
-    restart: unless-stopped
+  kong: {}
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
