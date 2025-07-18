@@ -596,8 +596,8 @@ services:
     image: timberio/vector:0.28.1-alpine
     restart: unless-stopped
     volumes:
-      - ./supabase/docker/volumes/logs/vector.yml:/etc/vector/vector.yml:ro,z
-      - ${DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro,z
+      - ./supabase/docker/volumes/logs:/etc/vector:ro
+      - ${DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro
     healthcheck: # <-- FIX #1: ADDED HEALTHCHECK
       test:
         [
