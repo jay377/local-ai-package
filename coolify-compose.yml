@@ -90,6 +90,9 @@ services:
       - n8n_storage:/home/node/.n8n
       - ./n8n/backup:/backup
       - ./shared:/data/shared
+    depends_on: # <-- FIX #2: ADDED DEPENDENCY
+      postgres:
+        condition: service_healthy
 
   qdrant:
     image: qdrant/qdrant
@@ -539,7 +542,6 @@ services:
       POSTGRES_BACKEND_SCHEMA: _analytics
       LOGFLARE_FEATURE_FLAG_OVERRIDE: multibackend=true
 
-  # This service was originally named 'db' in the Supabase file
   postgres:
     container_name: supabase-db
     image: supabase/postgres:15.8.1.060
@@ -596,6 +598,19 @@ services:
     volumes:
       - ./supabase/docker/volumes/logs/vector.yml:/etc/vector/vector.yml:ro,z
       - ${DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro,z
+    healthcheck: # <-- FIX #1: ADDED HEALTHCHECK
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://vector:9001/health"
+        ]
+      timeout: 5s
+      interval: 5s
+      retries: 3
     environment:
       LOGFLARE_PUBLIC_ACCESS_TOKEN: ${LOGFLARE_PUBLIC_ACCESS_TOKEN}
     command:
